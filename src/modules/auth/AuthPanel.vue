@@ -195,7 +195,7 @@ h1 { margin: 0; color: var(--text); font-size: clamp(27px, 4vw, 34px); line-heig
 .auth-heading > p:last-child { margin: 11px 0 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
 .method-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border: 1px solid var(--border); border-radius: 6px; background: var(--input); }
 .method-switch button { min-height: 37px; border: 0; border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; font: inherit; font-size: 12px; }
-.method-switch button.active { background: var(--surface-raised); color: var(--text); box-shadow: 0 1px 3px var(--thistle); }
+.method-switch button.active { background: var(--surface-raised); color: var(--text); box-shadow: 0 1px 3px var(--shadow); }
 .auth-form { display: grid; gap: 17px; margin-top: 23px; }
 .field { display: grid; gap: 7px; }
 .field-label, .field-label-row { color: var(--text); font-size: 12px; font-weight: 700; }
@@ -205,9 +205,9 @@ h1 { margin: 0; color: var(--text); font-size: clamp(27px, 4vw, 34px); line-heig
 .input-shell { display: flex; min-height: 47px; padding: 0 13px; align-items: center; gap: 10px; border: 1px solid var(--border-strong); border-radius: 6px; background: var(--input); transition: border-color .18s, box-shadow .18s; }
 .input-shell:focus-within { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
 .input-shell.invalid { border-color: var(--danger); }
-.input-shell > svg { width: 18px; flex: 0 0 auto; fill: none; stroke: var(--thistle); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }
+.input-shell > svg { width: 18px; flex: 0 0 auto; fill: none; stroke: var(--muted); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }
 .input-shell input { width: 100%; min-width: 0; padding: 0; border: 0; outline: 0; background: transparent; color: var(--text); font: inherit; font-size: 14px; }
-.input-shell input::placeholder { color: var(--thistle); }
+.input-shell input::placeholder { color: var(--muted); }
 .visibility-button { display: grid; width: 28px; height: 28px; flex: 0 0 auto; place-items: center; border: 0; border-radius: 4px; background: none; color: var(--muted); cursor: pointer; }
 .visibility-button:hover { background: var(--surface-raised); color: var(--text); }
 .visibility-button svg { width: 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }
@@ -221,12 +221,12 @@ h1 { margin: 0; color: var(--text); font-size: clamp(27px, 4vw, 34px); line-heig
 .agreement button { font-size: inherit; }
 .feedback { display: flex; margin: -2px 0 0; padding: 10px 11px; align-items: flex-start; gap: 8px; border: 1px solid var(--border); border-radius: 5px; background: var(--input); color: var(--muted); font-size: 11px; line-height: 1.45; }
 .feedback svg { width: 15px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
-.feedback.error { border-color: var(--baby-pink); background: var(--pastel-petal); color: var(--danger); }
-.feedback.success { border-color: var(--icy-blue); background: var(--brand-soft); color: var(--brand); }
+.feedback.error { border-color: #dfb4a9; background: var(--danger-soft); color: var(--danger); }
+.feedback.success { border-color: #b8cebd; background: var(--success-soft); color: var(--success); }
 .submit-button { display: flex; min-height: 48px; align-items: center; justify-content: center; gap: 9px; border: 0; border-radius: 6px; background: var(--brand); color: var(--on-brand); cursor: pointer; font: inherit; font-size: 14px; font-weight: 800; transition: background .18s, transform .18s; }
 .submit-button:hover:not(:disabled) { background: var(--brand-strong); }
 .submit-button:active:not(:disabled) { transform: translateY(1px); }
-.spinner { width: 15px; height: 15px; border: 2px solid var(--thistle); border-top-color: var(--sky-blue); border-radius: 50%; animation: spin .7s linear infinite; }
+.spinner { width: 15px; height: 15px; border: 2px solid #d9d7ce; border-top-color: var(--brand); border-radius: 50%; animation: spin .7s linear infinite; }
 .switch-hint { margin: 22px 0 0; color: var(--muted); font-size: 12px; text-align: center; }
 .switch-hint button { margin-left: 5px; font-weight: 700; }
 @keyframes spin { to { transform: rotate(360deg); } }

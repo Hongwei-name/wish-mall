@@ -6,33 +6,37 @@
 :root {
   color-scheme: light;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  /* Brand palette: lilac, petal, pink, ice and sky blue. */
-  --thistle: #cdb4db;
-  --pastel-petal: #ffc8dd;
-  --baby-pink: #ffafcc;
-  --icy-blue: #bde0fe;
-  --sky-blue: #a2d2ff;
+  /* Quiet mercantile palette: warm paper, evergreen, and restrained earth. */
+  --thistle: #a9b7a7;
+  --pastel-petal: #ebe8dc;
+  --baby-pink: #d9e1d5;
+  --icy-blue: #e2e8df;
+  --sky-blue: #c9d5c5;
 
   /*
-   * Semantic roles intentionally use accessible neutrals alongside the brand
-   * palette. Text #26313f on --page is 12.4:1; muted #586779 is 5.3:1;
-   * white on --brand is 4.8:1. Pastels remain decorative/supporting colors.
+   * Base: #25302a on #f6f4ee = 12.5:1; muted #667168 on page = 4.7:1.
+   * Evergreen #314b3d is reserved for actions; white text on it = 9.3:1.
+   * Soft sage/stone surfaces keep the storefront calm rather than decorative.
    */
-  --page: #f6f9fc;
-  --surface: #ffffff;
-  --surface-raised: #f0f6fc;
-  --input: #f8fbff;
-  --text: #26313f;
-  --muted: #586779;
-  --border: #d6e0eb;
-  --border-strong: #afc0d1;
-  --shadow: rgb(38 49 63 / 16%);
-  --brand: #467da9;
-  --brand-strong: #315f86;
-  --brand-soft: #e5f2fc;
-  --on-brand: #ffffff;
-  --danger: #b14363;
-  --success: #24725d;
+  --page: #f6f4ee;
+  --surface: #fffefa;
+  --surface-raised: #f0eee7;
+  --input: #faf9f4;
+  --text: #25302a;
+  --muted: #667168;
+  --border: #dedbd1;
+  --border-strong: #c7c4b9;
+  --shadow: rgb(37 48 42 / 12%);
+  --brand: #314b3d;
+  --brand-strong: #20362b;
+  --brand-soft: #e4ece2;
+  --on-brand: #fffefa;
+  --danger: #9d4d3d;
+  --danger-soft: #f5e6e0;
+  --success: #456b52;
+  --success-soft: #e4eee5;
+  --warning: #9a6a2f;
+  --warning-soft: #f5eddc;
   --blushed-brick: var(--danger);
   --hunter-green: var(--success);
 }

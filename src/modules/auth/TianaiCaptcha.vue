@@ -61,8 +61,8 @@ async function open() {
       },
       {
         logoUrl: null,
-        moveTrackMaskBgColor: '#e5f2fc',
-        moveTrackMaskBorderColor: '#467da9',
+        moveTrackMaskBgColor: '#e4ece2',
+        moveTrackMaskBorderColor: '#314b3d',
         i18n: { slider_title: '拖动滑块完成验证' },
       },
     )
@@ -112,7 +112,7 @@ defineExpose({ open })
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgb(38 49 63 / 52%);
+  background: rgb(32 54 43 / 50%);
   backdrop-filter: blur(4px);
 }
 

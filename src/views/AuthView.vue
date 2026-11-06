@@ -51,12 +51,12 @@ function handleAuthenticated() {
   padding: 42px clamp(36px, 6vw, 88px);
   border-right: 1px solid var(--border);
   overflow: hidden;
-  background: linear-gradient(145deg, var(--pastel-petal), var(--baby-pink), var(--thistle));
+  background: linear-gradient(145deg, #e7e5da 0%, #d9e1d5 58%, #c8d4c5 100%);
 }
 .brand-panel::before,
 .brand-panel::after {
   position: absolute;
-  border: 1px solid var(--icy-blue);
+  border: 1px solid rgb(49 75 61 / 24%);
   border-radius: 50%;
   content: '';
 }
@@ -65,7 +65,7 @@ function handleAuthenticated() {
   right: -210px;
   width: 520px;
   height: 520px;
-  box-shadow: 0 0 0 70px var(--baby-pink), 0 0 0 140px var(--pastel-petal);
+  box-shadow: 0 0 0 70px rgb(232 229 218 / 72%), 0 0 0 140px rgb(246 244 238 / 58%);
 }
 .brand-panel::after {
   bottom: -150px;
@@ -153,7 +153,7 @@ h2 {
   font-size: 12px;
 }
 .brand-copy li small {
-  color: var(--thistle);
+  color: var(--muted);
   font-size: 11px;
 }
 footer {
@@ -161,7 +161,7 @@ footer {
   z-index: 1;
   display: flex;
   justify-content: space-between;
-  color: var(--thistle);
+  color: var(--muted);
   font-size: 11px;
 }
 
