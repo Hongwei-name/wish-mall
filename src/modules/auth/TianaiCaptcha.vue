@@ -61,8 +61,8 @@ async function open() {
       },
       {
         logoUrl: null,
-        moveTrackMaskBgColor: '#e4ece2',
-        moveTrackMaskBorderColor: '#314b3d',
+        moveTrackMaskBgColor: '#f0e9f7',
+        moveTrackMaskBorderColor: '#69518a',
         i18n: { slider_title: '拖动滑块完成验证' },
       },
     )
