@@ -1,0 +1,20 @@
+.story-bottom { position: absolute; z-index: 2; bottom: 26px; left: 9%; right: 6%; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 11px; }
+.story-bottom > span > span { margin-left: 10px; color: var(--brand); }
+.video-controls { display: flex; gap: 4px; }
+.video-controls button { padding: 5px 9px; border: 1px solid #ffffff80; border-radius: 20px; color: var(--brand-ink); background: #ffffff55; font-size: 10px; }
+.form-area { position: relative; z-index: 3; container-type: inline-size; min-width: 0; margin-left: -22px; padding: 34px 12%; border: 1px solid var(--glass-border); border-radius: 30px; background: var(--glass); backdrop-filter: blur(26px); box-shadow: 0 24px 70px #315a9b12, inset 0 1px #ffffff; }
+.form-emblem { display: grid; width: 40px; height: 40px; margin-bottom: 22px; place-items: center; border: 1px solid white; border-radius: 13px; background: var(--brand-soft); color: var(--brand); }
+.form-emblem svg { width: 24px; height: 24px; }
+.secure-note { display: flex; justify-content: center; align-items: center; gap: 6px; margin: 24px 0 0; color: var(--muted); font-size: 10px; }
+.secure-note svg { width: 14px; height: 14px; }
+@media (max-width: 720px) {
+  .auth-page { padding-inline: 20px; }.auth-topbar { height: 84px; }.wordmark { font-size: 18px; }
+  .auth-topbar nav .nav-login { gap: 10px; padding: 8px 12px; font-size: 11px; }
+  .auth-layout { grid-template-columns: minmax(0, 1fr); margin-top: 0; }.story-panel { min-height: 395px; border-radius: 26px; }
+  .story-copy { padding: 32px 7% 76px; }.story-copy h1 { font-size: 42px; margin-top: 20px; }.story-caption { max-width: 200px; font-size: 12px; }
+  .wish-sculpture { scale: .58; bottom: 65px; right: 0; }.story-bottom { left: 7%; bottom: 22px; }.story-bottom > span { display: none; }
+  .form-area { margin: -6px 0 0; padding: 30px max(22px, 8%); border-radius: 26px; }.form-emblem { display: none; }
+}
+@container (max-width: 300px) { .secure-note { font-size: 9px; } }
+@keyframes mist-drift { to { transform: translate(-70px, 50px) scale(1.1); } }
+@media (min-width: 721px) and (max-width: 1000px) { .auth-page { padding-inline: 4%; }.auth-layout { grid-template-columns: minmax(0, 1fr) minmax(330px, 1fr); }.form-area { padding: 32px 9%; }.story-copy { padding-inline: 8%; }.story-copy h1 { font-size: 48px; }.wish-sculpture { scale: .8; transform-origin: right bottom; right: 4%; bottom: 100px; } }

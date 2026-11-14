@@ -48,8 +48,12 @@
 
 - 认证业务接口集中于 `src/modules/auth/api.js`。
 - Token 仅由 `auth` store 保存和清除；页面组件不得直接读写存储。
+- `src/api/http.js` 通过 `setAuthTokenProvider` 注入 Token，统一附加 `Authorization: Bearer`，并保留后端业务错误码。
+- `auth` store 的 `ensureSession()` 调用 `/auth/me` 校验 Token 与账号状态；`logout()` 调用 `/auth/logout` 后清理本地会话。
+- 路由守卫异步执行 `ensureSession()`；未登录或 Token 失效时跳转 `/auth` 并携带 `redirect`，登录后返回原目标页。
 - 业务接口成功响应统一为 `{ code: 200, message, data }`。
 - 开发联调使用 Vite `/api` 代理访问本地认证服务；组件中不得散落环境地址。
+- 新增认证接口：`GET /auth/me`、`POST /auth/logout`、`POST /auth/password/reset`；`/auth/password/reset` 使用短信验证码重置密码。
 
 ### 3.4 TianAI 滑块验证码
 
@@ -57,11 +61,20 @@
 - 静态资源位于 `public/tac/tac`，由 `src/modules/auth/TianaiCaptcha.vue` 按需加载。
 - SDK 直接调用 `/api/auth/captcha/gen`（后端兼容 `GET` 与 `POST`）和 `/api/auth/captcha/check`。
 - 禁止手写图片定位、拖动轨迹或像素校验。
-- 校验成功回调中的 `captchaId` 只能用于一次 `/api/auth/sms/send` 请求。
+- 校验成功回调中的 `captchaId` 只能用于一次 `/api/auth/sms/send` 请求；请求同时携带当前 `scene`（`register` / `login` / `reset-password`），后端按场景独立限流；`prod` 调用 PNVS 发送，`test` 只在控制台打印验证码。
 - 修改认证模块时，同步维护本节，记录接口、存储边界或主题 token 的结构性变更，并执行 `npm run build`。
-- 登录与注册共用 AuthPanel，样式在 auth-panel.css；全局语义主题 token 位于 App.vue。粉紫/粉蓝用于装饰背景，深紫 --brand 用于可访问操作，文字与状态对比度记录在全局样式注释中，验证码 SDK 使用同一深紫主题。
-- 登录接口与 Token 存储边界保持不变；工作台未接入的订单、会员及资料服务明确显示未接入，不使用模拟用户数据。
+- 登录、注册与找回密码共用 AuthPanel，表单样式在 auth-panel.css，首屏视觉在 auth-page.css，布局与响应式在 auth-page-layout.css；全局语义主题 token 位于 App.vue。按用户要求使用 #4176E6 品牌蓝，--brand-ink / --brand-strong 用于小字链接与深色交互；--glass / --glass-border 用于雾透表面，文字与状态对比度记录在全局样式注释中。验证码 SDK 从全局 --brand-soft / --brand 读取主题，接口与 Token 边界不变。
+- 登录接口路径保持不变；Token 仍存 sessionStorage，但路由守卫通过 `/auth/me` 校验，退出登录调用 `/auth/logout`。注册与重置密码要求 8-64 位且包含字母和数字；找回密码使用同一短信验证码流程，短信发送带 `scene` 供后端区分场景限流。
 - 登录首屏视频提供暂停和字幕开关，远程视频不可用时保留本地渐变背景。
+
+### 3.5 小愿助手
+
+- 工作台左下角「小愿」卡片为整卡按钮，点击打开右侧悬浮抽屉；布局、卡片、侧边导航与配色保持不变。
+- 抽屉组件位于 `src/modules/assistant/AssistantDrawer.vue`，通过 `Teleport` 挂载到 `body`，带轻遮罩、焦点陷阱、Esc/遮罩关闭与滚动锁定，不挤压原页面。
+- 对话请求走 `GET /api/assistant/chat`（EventSource，参数 message / conversationId），开发环境由 Vite 将 `/api/assistant` 代理到 `http://localhost:2002`；默认 message 事件推送 Markdown 分片，命名 done 事件表示正常结束。
+- `[STREAM_INTERRUPT]` / `[ERROR]服务异常` 只由后端产生，前端收到后标记断流并显示 hover 刷新图标（仅 aria-label，无可见文字），不会写入 Markdown；5 秒无新数据也判定断流。
+- 重试复用同一 conversationId 与上一轮提问；AI 气泡用 marked + DOMPurify 渲染 GFM，用户气泡纯文本。EventSource 无法附带 Authorization，接入鉴权时需改为 fetch-SSE 或 Cookie。
+- 商品与订单工具依赖后续业务服务；AI 服务重启后加载新接口。
 
 ## 4. 页面与交互
 
@@ -91,6 +104,7 @@
 ### 5.1 视觉基线
 
 - 使用 CSS 自定义属性统一管理颜色、间距、边框和焦点状态。
+- 图标统一使用 `@lucide/vue` 官方组件，经 `AccountIcon` 按业务名称映射，保持 24px 网格、2px 描边、圆角线端与连接；hover 仅做约 8% 的轻微放大并柔和过渡，尊重系统减少动态效果设置。
 - 认证页面保持清晰单栏工作流、明确验证反馈和移动端可用性。
 - 每种颜色使用都需记录用途、对比度数值及其与品牌色的关系；不得仅以“好看”决定颜色。
 
@@ -109,19 +123,16 @@
 
 ```css
 :root {
-  --thistle: #cdb4dbff;
-  --pastel-petal: #ffc8ddff;
-  --baby-pink: #ffafccff;
-  --icy-blue: #bde0feff;
-  --sky-blue: #a2d2ffff;
+  --brand: #4176e6; /* 品牌主色、装饰与大字加粗 CTA */
+  --brand-ink: #2857b5; /* 小字链接，白底约 6.7:1 */
+  --brand-strong: #2857b5; /* hover 与强调交互 */
+  --brand-soft: #eaf1ff; /* 品牌浅色背景 */
+  --glass: rgb(255 255 255 / 72%);
+  --glass-border: rgb(255 255 255 / 85%);
 }
 ```
 
---thistle: #cdb4dbff;
---pastel-petal: #ffc8ddff;
---baby-pink: #ffafccff;
---icy-blue: #bde0feff;
---sky-blue: #a2d2ffff;
+雾透效果使用半透明白色、backdrop-filter 与柔蓝投影；输入和正文保持清晰对比。尊重系统减少动态效果设置。
 
 ## 6. 框架特定约束
 

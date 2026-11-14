@@ -1,5 +1,14 @@
 const API_SUCCESS_CODE = 200
 
+let authTokenProvider = () => ''
+
+/**
+ * 由 main.js 注入 Token 获取函数，避免组件直接读取 sessionStorage。
+ */
+export function setAuthTokenProvider(provider) {
+  authTokenProvider = provider
+}
+
 export class ApiError extends Error {
   constructor(message, code = 0) {
     super(message)
@@ -9,15 +18,18 @@ export class ApiError extends Error {
 }
 
 export async function request(path, options = {}) {
+  const { headers, ...rest } = options
+  const token = authTokenProvider()
   let response
 
   try {
     response = await fetch(path, {
+      ...rest,
       headers: {
         'Content-Type': 'application/json',
-        ...options.headers,
+        ...headers,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      ...options,
     })
   } catch {
     throw new ApiError('网络连接失败，请检查服务是否启动')

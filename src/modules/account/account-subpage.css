@@ -1,0 +1,18 @@
+.account-subpage .dashboard-content { max-width: 1120px; }
+.account-subpage .welcome-heading { margin-bottom: 22px; }
+.account-subpage .welcome-heading h1 { margin-bottom: 0; }
+.account-subpage .order-filters { padding-top: 20px; }
+.account-subpage .order-empty { min-height: 340px; }
+.account-subpage .account-empty-panel { min-height: 360px; }
+.account-subpage .settings-panel { padding-bottom: 12px; }
+.account-subpage .settings-list { margin: 0; padding: 0 26px 18px; }
+.account-subpage .settings-row { display: flex; justify-content: space-between; gap: 24px; padding: 16px 0; border-top: 1px solid var(--border); }
+.account-subpage .settings-row:first-child { border-top: 0; }
+.account-subpage .settings-row dt { color: var(--muted); font-size: 12px; }
+.account-subpage .settings-row dd { margin: 0; color: var(--text); font-size: 12px; font-weight: 600; text-align: right; }
+.account-subpage .settings-panel + .settings-panel { margin-top: 22px; }
+.account-subpage .settings-row--action dd { display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
+.account-subpage .security-state { color: var(--muted); font-weight: 500; }
+.account-subpage .settings-action { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: none; color: var(--brand-ink); font-size: 12px; font-weight: 600; cursor: pointer; }
+.account-subpage .settings-action:hover { color: var(--brand-strong); }
+.account-subpage .settings-action svg { width: 15px; height: 15px; }

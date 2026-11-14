@@ -27,3 +27,18 @@ export function registerWithSms(payload) {
     body: JSON.stringify(payload),
   })
 }
+
+export function resetPassword(payload) {
+  return request('/api/auth/password/reset', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export function fetchCurrentUser() {
+  return request('/api/auth/me')
+}
+
+export function logout() {
+  return request('/api/auth/logout', { method: 'POST' })
+}
