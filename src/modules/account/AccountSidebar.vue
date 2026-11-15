@@ -37,23 +37,42 @@ async function signOut() {
       <span><strong>如你所愿</strong><small>WISH MALL</small></span>
     </a>
     <nav class="sidebar-nav" aria-label="个人中心导航">
-      <RouterLink v-for="item in navItems" :key="item.name" :to="{ name: item.name }" :class="{ 'is-current': isCurrent(item.name) }" :aria-current="isCurrent(item.name) ? 'page' : undefined">
+      <RouterLink
+        v-for="item in navItems"
+        :key="item.name"
+        :to="{ name: item.name }"
+        :class="{ 'is-current': isCurrent(item.name) }"
+        :aria-current="isCurrent(item.name) ? 'page' : undefined"
+      >
         <AccountIcon :name="item.icon" />
         <span>{{ item.label }}</span>
         <i v-if="isCurrent(item.name)" aria-hidden="true"></i>
       </RouterLink>
     </nav>
     <div class="sidebar-bottom">
-      <button class="sidebar-note" type="button" aria-haspopup="dialog" @click="assistantOpen = true">
-        <span class="assistant-head"><span class="assistant-avatar"><AccountIcon name="bot" /></span><span class="assistant-name">小愿</span></span>
+      <button
+        class="sidebar-note"
+        type="button"
+        aria-haspopup="dialog"
+        @click="assistantOpen = true"
+      >
+        <span class="assistant-head"
+          ><span class="assistant-avatar"><AccountIcon name="bot" /></span
+          ><span class="assistant-name">小愿</span></span
+        >
         <span class="assistant-button">唤醒小愿</span>
       </button>
-      <button class="logout-button" type="button" @click="signOut"><AccountIcon name="logout" />退出登录</button>
+      <button class="logout-button" type="button" @click="signOut">
+        <AccountIcon name="logout" />退出登录
+      </button>
     </div>
     <AssistantDrawer v-model:open="assistantOpen" />
   </aside>
 </template>
 
 <style scoped>
-.sidebar-nav a:hover { color: var(--brand-ink); background: var(--brand-soft); }
+.sidebar-nav a:hover {
+  color: var(--brand-ink);
+  background: var(--brand-soft);
+}
 </style>

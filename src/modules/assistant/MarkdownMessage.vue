@@ -1,5 +1,5 @@
-// 小愿 AI 消息的 Markdown 渲染组件。
-// 模型返回 GFM Markdown；这里只做 Markdown→HTML 与 XSS 清洗，不改写文本语义。
+// 小愿 AI 消息的 Markdown 渲染组件。 // 模型返回 GFM Markdown；这里只做 Markdown→HTML 与 XSS
+清洗，不改写文本语义。
 <script setup>
 import { computed } from 'vue'
 import { marked } from 'marked'

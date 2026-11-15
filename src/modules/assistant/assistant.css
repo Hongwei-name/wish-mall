@@ -49,7 +49,9 @@
   border-radius: 11px;
   background: linear-gradient(145deg, #fff, var(--brand-soft));
   color: var(--brand-ink);
-  box-shadow: inset 0 1px white, 0 4px 10px rgb(65 118 230 / 12%);
+  box-shadow:
+    inset 0 1px white,
+    0 4px 10px rgb(65 118 230 / 12%);
 }
 
 .assistant-header h2 {
@@ -58,7 +60,7 @@
   font-size: 17px;
   font-weight: 650;
   line-height: 1.3;
-  letter-spacing: .02em;
+  letter-spacing: 0.02em;
 }
 
 .assistant-close {
@@ -70,7 +72,9 @@
   border-radius: 50%;
   background: transparent;
   color: var(--muted);
-  transition: background .18s ease, color .18s ease;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
 }
 
 .assistant-close:hover {
@@ -178,16 +182,16 @@
   height: 5px;
   border-radius: 50%;
   background: var(--brand);
-  opacity: .3;
+  opacity: 0.3;
   animation: assistant-typing 1.2s infinite ease-in-out;
 }
 
 .assistant-typing i:nth-child(2) {
-  animation-delay: .15s;
+  animation-delay: 0.15s;
 }
 
 .assistant-typing i:nth-child(3) {
-  animation-delay: .3s;
+  animation-delay: 0.3s;
 }
 
 .assistant-retry {
@@ -201,7 +205,11 @@
   background: transparent;
   color: var(--muted);
   opacity: 0;
-  transition: opacity .18s ease, background .18s ease, color .18s ease, border-color .18s ease;
+  transition:
+    opacity 0.18s ease,
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .assistant-message.ai:hover .assistant-retry,
@@ -221,7 +229,7 @@
 }
 
 .assistant-retry svg {
-  transition: transform .25s ease;
+  transition: transform 0.25s ease;
 }
 
 .assistant-retry:hover:not(:disabled) svg {
@@ -230,11 +238,11 @@
 
 @media (hover: none) {
   .assistant-retry {
-    opacity: .7;
+    opacity: 0.7;
   }
 
   .assistant-retry:disabled {
-    opacity: .3;
+    opacity: 0.3;
   }
 }
 
@@ -417,7 +425,9 @@
   font: inherit;
   font-size: 13px;
   outline: none;
-  transition: border-color .18s ease, box-shadow .18s ease;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .assistant-composer input:focus {
@@ -440,7 +450,10 @@
   background: var(--brand);
   color: #fff;
   box-shadow: 0 7px 16px rgb(65 118 230 / 26%);
-  transition: background .18s ease, transform .18s ease, box-shadow .18s ease;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .assistant-send:hover:not(:disabled) {
@@ -449,14 +462,14 @@
 }
 
 .assistant-send:disabled {
-  opacity: .45;
+  opacity: 0.45;
   box-shadow: none;
   cursor: not-allowed;
 }
 
 .assistant-fade-enter-active,
 .assistant-fade-leave-active {
-  transition: opacity .24s ease;
+  transition: opacity 0.24s ease;
 }
 
 .assistant-fade-enter-from,
@@ -465,7 +478,7 @@
 }
 
 .assistant-fade-enter-active .assistant-drawer {
-  transition: transform .3s cubic-bezier(.22, .8, .3, 1);
+  transition: transform 0.3s cubic-bezier(0.22, 0.8, 0.3, 1);
 }
 
 .assistant-fade-enter-from .assistant-drawer {
@@ -473,7 +486,7 @@
 }
 
 .assistant-fade-leave-active .assistant-drawer {
-  transition: transform .24s ease;
+  transition: transform 0.24s ease;
 }
 
 .assistant-fade-leave-to .assistant-drawer {
@@ -484,7 +497,7 @@
   0%,
   80%,
   100% {
-    opacity: .25;
+    opacity: 0.25;
     transform: translateY(0);
   }
 
@@ -512,7 +525,7 @@
 
   .assistant-typing i {
     animation: none;
-    opacity: .6;
+    opacity: 0.6;
   }
 
   .assistant-retry svg {

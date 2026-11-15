@@ -62,8 +62,12 @@ async function open() {
       },
       {
         logoUrl: null,
-        moveTrackMaskBgColor: getComputedStyle(document.documentElement).getPropertyValue('--brand-soft').trim(),
-        moveTrackMaskBorderColor: getComputedStyle(document.documentElement).getPropertyValue('--brand').trim(),
+        moveTrackMaskBgColor: getComputedStyle(document.documentElement)
+          .getPropertyValue('--brand-soft')
+          .trim(),
+        moveTrackMaskBorderColor: getComputedStyle(document.documentElement)
+          .getPropertyValue('--brand')
+          .trim(),
         i18n: { slider_title: '拖动滑块完成验证' },
       },
     )
@@ -97,7 +101,9 @@ defineExpose({ open })
       <div class="captcha-dialog">
         <div class="captcha-dialog__header">
           <p>安全验证</p>
-          <button type="button" aria-label="关闭图形验证" @click="close"><AccountIcon name="close" /></button>
+          <button type="button" aria-label="关闭图形验证" @click="close">
+            <AccountIcon name="close" />
+          </button>
         </div>
         <div id="tianai-captcha-host" ref="host" class="tianai-captcha-host" />
       </div>
@@ -155,9 +161,19 @@ defineExpose({ open })
   font-size: 22px;
   line-height: 1;
 }
-.captcha-dialog__header button svg { width: 18px; height: 18px; transition: transform .18s ease; }
-.captcha-dialog__header button:hover svg { transform: scale(1.08); }
-@media (prefers-reduced-motion: reduce) { .captcha-dialog__header button:hover svg { transform: none; } }
+.captcha-dialog__header button svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.18s ease;
+}
+.captcha-dialog__header button:hover svg {
+  transform: scale(1.08);
+}
+@media (prefers-reduced-motion: reduce) {
+  .captcha-dialog__header button:hover svg {
+    transform: none;
+  }
+}
 
 .captcha-dialog__header button:hover {
   background: var(--surface-raised);

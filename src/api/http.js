@@ -48,3 +48,33 @@ export async function request(path, options = {}) {
 
   return payload.data
 }
+
+export async function uploadFile(path, file, fieldName = 'file') {
+  const token = authTokenProvider()
+  const form = new FormData()
+  form.append(fieldName, file)
+  let response
+
+  try {
+    response = await fetch(path, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: form,
+    })
+  } catch {
+    throw new ApiError('网络连接失败，请检查服务是否启动')
+  }
+
+  let payload
+  try {
+    payload = await response.json()
+  } catch {
+    throw new ApiError('服务响应异常，请稍后重试', response.status)
+  }
+
+  if (!response.ok || payload.code !== API_SUCCESS_CODE) {
+    throw new ApiError(payload.message || '请求未完成，请稍后重试', payload.code || response.status)
+  }
+
+  return payload.data
+}

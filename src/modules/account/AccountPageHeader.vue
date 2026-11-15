@@ -14,12 +14,24 @@ function userInitial() {
 
 <template>
   <header class="account-topbar">
-    <div class="breadcrumb"><RouterLink to="/profile">个人中心</RouterLink><span>/</span><strong>{{ section }}</strong></div>
-    <nav aria-label="快捷导航"><span class="mini-avatar" aria-label="用户头像">{{ userInitial() }}</span></nav>
+    <div class="breadcrumb">
+      <RouterLink to="/profile">个人中心</RouterLink><span>/</span><strong>{{ section }}</strong>
+    </div>
+    <nav aria-label="快捷导航">
+      <span class="mini-avatar" aria-label="用户头像">
+        <img v-if="authStore.user?.avatar" :src="authStore.user.avatar" alt="头像" />
+        <span v-else>{{ userInitial() }}</span>
+      </span>
+    </nav>
   </header>
 </template>
 
 <style scoped>
-.breadcrumb a { color: inherit; text-decoration: none; }
-.breadcrumb a:hover { color: var(--brand-ink); }
+.breadcrumb a {
+  color: inherit;
+  text-decoration: none;
+}
+.breadcrumb a:hover {
+  color: var(--brand-ink);
+}
 </style>

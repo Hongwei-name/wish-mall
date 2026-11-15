@@ -1,4 +1,4 @@
-import { request } from '@/api/http'
+import { request, uploadFile } from '@/api/http'
 
 export function sendSmsCode(payload) {
   return request('/api/auth/sms/send', {
@@ -35,8 +35,26 @@ export function resetPassword(payload) {
   })
 }
 
+export function changePassword(payload) {
+  return request('/api/auth/password/change', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
 export function fetchCurrentUser() {
   return request('/api/auth/me')
+}
+
+export function updateProfile(payload) {
+  return request('/api/auth/profile', {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  })
+}
+
+export function uploadAvatar(file) {
+  return uploadFile('/api/auth/profile/avatar', file, 'file')
 }
 
 export function logout() {

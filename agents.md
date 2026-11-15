@@ -53,7 +53,7 @@
 - 路由守卫异步执行 `ensureSession()`；未登录或 Token 失效时跳转 `/auth` 并携带 `redirect`，登录后返回原目标页。
 - 业务接口成功响应统一为 `{ code: 200, message, data }`。
 - 开发联调使用 Vite `/api` 代理访问本地认证服务；组件中不得散落环境地址。
-- 新增认证接口：`GET /auth/me`、`POST /auth/logout`、`POST /auth/password/reset`；`/auth/password/reset` 使用短信验证码重置密码。
+- 新增认证接口：`GET /auth/me`、`POST /auth/logout`、`POST /auth/password/change`、`POST /auth/password/reset`；`/auth/password/change` 校验旧密码后更新密码，`/auth/password/reset` 使用短信验证码重置密码。
 
 ### 3.4 TianAI 滑块验证码
 

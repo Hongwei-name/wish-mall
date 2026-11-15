@@ -1,6 +1,11 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { fetchCurrentUser, logout as logoutRequest } from '@/modules/auth/api'
+import {
+  fetchCurrentUser,
+  logout as logoutRequest,
+  updateProfile as updateProfileRequest,
+  uploadAvatar as uploadAvatarRequest,
+} from '@/modules/auth/api'
 
 const TOKEN_KEY = 'wish-mall.auth-token'
 
@@ -84,6 +89,18 @@ export const useAuthStore = defineStore('auth', () => {
     clearSession()
   }
 
+  async function saveProfile(payload) {
+    const nextUser = await updateProfileRequest(payload)
+    user.value = nextUser
+    return nextUser
+  }
+
+  async function uploadAvatar(file) {
+    const nextUser = await uploadAvatarRequest(file)
+    user.value = nextUser
+    return nextUser
+  }
+
   return {
     token,
     user,
@@ -94,5 +111,7 @@ export const useAuthStore = defineStore('auth', () => {
     clearSession,
     ensureSession,
     logout,
+    saveProfile,
+    uploadAvatar,
   }
 })
