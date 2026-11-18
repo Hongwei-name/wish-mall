@@ -54,13 +54,13 @@ async function signOut() {
         class="sidebar-note"
         type="button"
         aria-haspopup="dialog"
+        aria-label="打开小愿助手"
         @click="assistantOpen = true"
       >
-        <span class="assistant-head"
-          ><span class="assistant-avatar"><AccountIcon name="bot" /></span
-          ><span class="assistant-name">小愿</span></span
-        >
-        <span class="assistant-button">唤醒小愿</span>
+        <span class="assistant-head">
+          <span class="assistant-avatar"><AccountIcon name="bot" /></span>
+          <span class="assistant-name">小愿</span>
+        </span>
       </button>
       <button class="logout-button" type="button" @click="signOut">
         <AccountIcon name="logout" />退出登录

@@ -9,6 +9,13 @@ export function setAuthTokenProvider(provider) {
   authTokenProvider = provider
 }
 
+/**
+ * 读取当前 Token，供 fetch-SSE 等无法使用 request() 的场景附加 Bearer。
+ */
+export function authToken() {
+  return authTokenProvider()
+}
+
 export class ApiError extends Error {
   constructor(message, code = 0) {
     super(message)

@@ -28,9 +28,6 @@ function selectStatus(key) {
     <main id="account-content" class="account-main" tabindex="-1">
       <AccountPageHeader section="我的订单" />
       <div class="dashboard-content">
-        <section class="welcome-heading" aria-labelledby="orders-title">
-          <h1 id="orders-title">我的订单</h1>
-        </section>
         <section class="account-panel" aria-label="订单筛选与列表">
           <div class="order-filters" role="group" aria-label="按订单状态筛选">
             <button

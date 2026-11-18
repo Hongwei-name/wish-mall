@@ -40,20 +40,9 @@ const needsPassword = computed(
   () => isRegister.value || isReset.value || loginMethod.value === 'password',
 )
 const showConfirm = computed(() => isRegister.value || isReset.value)
-const heading = computed(() =>
-  isReset.value ? '重设心愿密码' : isRegister.value ? '初次见面，心愿生活家' : '欢迎回来，好久不见',
-)
-const subheading = computed(() =>
-  isReset.value
-    ? '验证手机号后设置新密码。'
-    : isRegister.value
-      ? '创建账户，让每一份喜欢都有归处。'
-      : '登录如你所愿，继续你的美好日常。',
-)
+const heading = computed(() => (isReset.value ? '重设密码' : isRegister.value ? '创建账户' : '登录'))
 const passwordLabel = computed(() => (isReset.value ? '新密码' : '密码'))
-const actionText = computed(() =>
-  isReset.value ? '重设密码' : isRegister.value ? '创建心愿账户' : '登录，开启心愿之旅',
-)
+const actionText = computed(() => (isReset.value ? '重设密码' : isRegister.value ? '注册' : '登录'))
 const smsScene = computed(() =>
   isReset.value ? 'reset-password' : isRegister.value ? 'register' : 'login',
 )
@@ -239,7 +228,6 @@ onBeforeUnmount(() => clearInterval(cooldownTimer))
     </div>
     <header class="auth-heading">
       <h1 id="auth-heading">{{ heading }}</h1>
-      <p>{{ subheading }}</p>
     </header>
     <div v-if="!isRegister && !isReset" class="method-switch" aria-label="登录方式">
       <button
@@ -394,12 +382,7 @@ onBeforeUnmount(() => clearInterval(cooldownTimer))
     <p v-if="isReset" class="switch-hint">
       <button type="button" @click="backToLogin">返回登录</button>
     </p>
-    <p v-else class="switch-hint">
-      {{ isRegister ? '已经有账户？' : '还没有账户？'
-      }}<button type="button" @click="switchAccountMode(isRegister ? 'login' : 'register')">
-        {{ isRegister ? '直接登录' : '免费注册' }}
-      </button>
-    </p>
+
     <TianaiCaptcha
       ref="captcha"
       @verified="handleCaptchaVerified"

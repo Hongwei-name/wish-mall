@@ -1,41 +1,94 @@
 <script setup>
-// 小愿聊天抽屉：EventSource SSE、5 秒空闲检测、Markdown 渲染与断流重试。
+// 小愿聊天抽屉：fetch-SSE、历史分页（从新到旧、向上加载）、5 秒空闲检测、Markdown 渲染与断流重试。
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { Bot, RefreshCw, Send, X } from '@lucide/vue'
+import { useAuthStore } from '@/stores/auth'
 import MarkdownMessage from './MarkdownMessage.vue'
+import { listMessages, streamChat } from './api'
 import './assistant.css'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
 })
 const emit = defineEmits(['update:open'])
+const authStore = useAuthStore()
 
 const STREAM_INTERRUPT = '[STREAM_INTERRUPT]'
 const STREAM_ERROR = '[ERROR]服务异常'
 const INACTIVITY_TIMEOUT = 5000
+const PAGE_SIZE = 20
+const CONVERSATION_KEY = 'wish-mall.assistant-conversation-id'
 
 const messages = ref([])
 const draft = ref('')
 const input = ref(null)
 const list = ref(null)
 const panel = ref(null)
+const loadingMore = ref(false)
 
-let eventSource
+let abortController
 let inactivityTimer
 let returnFocus
 let previousOverflow = ''
 let previousPadding = ''
 let sequence = 0
 let stickToBottom = true
+let nextCursor = null
+let hasMore = false
+let initialized = false
 
-const conversationId =
-  globalThis.crypto?.randomUUID?.() ?? `wish-${Date.now()}-${Math.random().toString(16).slice(2)}`
+function createUuid() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
+    const random = (Math.random() * 16) | 0
+    const value = char === 'x' ? random : (random & 0x3) | 0x8
+    return value.toString(16)
+  })
+}
+
+// 会话 id 按登录用户隔离，避免同一浏览器换账号后复用他人会话。
+function conversationStorageKey() {
+  return `${CONVERSATION_KEY}:${authStore.user?.id ?? 'guest'}`
+}
+
+function readStoredConversationId() {
+  try {
+    return localStorage.getItem(conversationStorageKey()) || ''
+  } catch {
+    return ''
+  }
+}
+
+function storeConversationId(id) {
+  try {
+    localStorage.setItem(conversationStorageKey(), id)
+  } catch {
+    // 隐私模式下忽略
+  }
+}
+
+const conversationId = ref('')
+let conversationOwnerKey = ''
+
+function ensureConversationId() {
+  const key = conversationStorageKey()
+  if (conversationOwnerKey !== key) {
+    conversationOwnerKey = key
+    conversationId.value = ''
+  }
+  if (!conversationId.value) {
+    conversationId.value = readStoredConversationId() || createUuid()
+    storeConversationId(conversationId.value)
+  }
+  return conversationId.value
+}
+
 const streaming = computed(() => messages.value.some((message) => message.isStreaming))
 const canSend = computed(() => draft.value.trim().length > 0 && !streaming.value)
 
 function addMessage(role, extra = {}) {
   messages.value.push({
-    id: ++sequence,
+    id: `local-${++sequence}`,
     role,
     text: '',
     fullMd: '',
@@ -45,6 +98,32 @@ function addMessage(role, extra = {}) {
   })
   // 返回数组中的响应式代理，流式追加才能触发视图更新。
   return messages.value[messages.value.length - 1]
+}
+
+function toMessage(row) {
+  const isUser = row.role === 'user'
+  return {
+    id: row.id || `db-${row.createdAt}-${row.role}`,
+    role: isUser ? 'user' : 'ai',
+    text: isUser ? row.content : '',
+    fullMd: isUser ? '' : row.content,
+    isInterrupt: false,
+    isStreaming: false,
+    retryText: '',
+  }
+}
+
+function addGreeting() {
+  messages.value = [
+    {
+      id: 'greeting',
+      role: 'ai',
+      text: '',
+      fullMd: '你好，我是小愿。',
+      isInterrupt: false,
+      isStreaming: false,
+    },
+  ]
 }
 
 function scrollToBottom(force = false) {
@@ -58,6 +137,55 @@ function onScroll() {
   const element = list.value
   if (!element) return
   stickToBottom = element.scrollHeight - element.scrollTop - element.clientHeight < 80
+  if (element.scrollTop <= 40) loadOlder()
+}
+
+async function loadLatest() {
+  initialized = true
+  try {
+    ensureConversationId()
+    const page = await listMessages(conversationId.value, PAGE_SIZE)
+    nextCursor = page?.nextCursor || null
+    hasMore = Boolean(page?.hasMore)
+    const items = Array.isArray(page?.items) ? [...page.items].reverse() : []
+    if (items.length) {
+      messages.value = items.map(toMessage)
+    } else {
+      addGreeting()
+    }
+  } catch (error) {
+    if (error?.code === 404) {
+      // 旧会话不属于当前用户：换一个新的会话 id。
+      conversationId.value = createUuid()
+      storeConversationId(conversationId.value)
+    }
+    addGreeting()
+  }
+  await nextTick()
+  scrollToBottom(true)
+}
+
+async function loadOlder() {
+  if (loadingMore.value || !hasMore || !nextCursor) return
+  loadingMore.value = true
+  const element = list.value
+  const previousHeight = element?.scrollHeight ?? 0
+  try {
+    const page = await listMessages(conversationId.value, PAGE_SIZE, nextCursor)
+    nextCursor = page?.nextCursor || null
+    hasMore = Boolean(page?.hasMore)
+    const items = Array.isArray(page?.items) ? [...page.items].reverse() : []
+    if (items.length) {
+      messages.value = [...items.map(toMessage), ...messages.value]
+      await nextTick()
+      // 向上追加内容后补偿滚动位置，避免视口跳动。
+      if (element) element.scrollTop += element.scrollHeight - previousHeight
+    }
+  } catch {
+    hasMore = false
+  } finally {
+    loadingMore.value = false
+  }
 }
 
 function clearInactivityTimer() {
@@ -68,9 +196,9 @@ function clearInactivityTimer() {
 
 function closeStream() {
   clearInactivityTimer()
-  if (eventSource) {
-    eventSource.close()
-    eventSource = undefined
+  if (abortController) {
+    abortController.abort()
+    abortController = undefined
   }
 }
 
@@ -78,9 +206,7 @@ function armInactivityTimer(aiMessage) {
   clearInactivityTimer()
   inactivityTimer = setTimeout(() => {
     if (!aiMessage.isStreaming) return
-    aiMessage.isStreaming = false
-    aiMessage.isInterrupt = true
-    closeStream()
+    interruptStream(aiMessage)
   }, INACTIVITY_TIMEOUT)
 }
 
@@ -104,38 +230,43 @@ function startStream(question, aiMessage) {
   stickToBottom = true
   scrollToBottom(true)
 
-  const url =
-    `/api/assistant/chat?message=${encodeURIComponent(question)}` +
-    `&conversationId=${encodeURIComponent(conversationId)}`
-  const source = new EventSource(url)
-  eventSource = source
+  abortController = streamChat(
+    {
+      message: question,
+      conversationId: ensureConversationId(),
+      requestId: createUuid(),
+    },
+    {
+      onMeta(id) {
+        // 服务端可能因旧 id 属于其他账号而重建会话，这里同步并持久化新 id。
+        if (id && id !== conversationId.value) {
+          conversationId.value = id
+          storeConversationId(id)
+        }
+      },
+      onChunk(chunk) {
+        if (!aiMessage.isStreaming) return
+        armInactivityTimer(aiMessage)
+
+        if (chunk === STREAM_INTERRUPT || chunk === STREAM_ERROR) {
+          interruptStream(aiMessage)
+          return
+        }
+        aiMessage.fullMd += chunk
+        scrollToBottom()
+      },
+      onPing() {
+        if (aiMessage.isStreaming) armInactivityTimer(aiMessage)
+      },
+      onDone() {
+        if (aiMessage.isStreaming) finishStream(aiMessage)
+      },
+      onError() {
+        if (aiMessage.isStreaming) interruptStream(aiMessage)
+      },
+    },
+  )
   armInactivityTimer(aiMessage)
-
-  source.onmessage = (event) => {
-    if (!aiMessage.isStreaming) return
-    armInactivityTimer(aiMessage)
-
-    const chunk = event.data
-    if (chunk === STREAM_INTERRUPT || chunk === STREAM_ERROR) {
-      interruptStream(aiMessage)
-      return
-    }
-    aiMessage.fullMd += chunk
-    scrollToBottom()
-  }
-
-  source.addEventListener('done', () => {
-    if (aiMessage.isStreaming) finishStream(aiMessage)
-  })
-
-  // 后端心跳：上游 TLS 握手/重试可能超过 5 秒，收到 ping 后重置空闲计时。
-  source.addEventListener('ping', () => {
-    if (aiMessage.isStreaming) armInactivityTimer(aiMessage)
-  })
-
-  source.onerror = () => {
-    if (aiMessage.isStreaming) interruptStream(aiMessage)
-  }
 }
 
 function send() {
@@ -201,7 +332,9 @@ watch(
       returnFocus = document.activeElement
       lockScroll()
       window.addEventListener('keydown', onKeydown)
-      if (!messages.value.length) addMessage('ai', { fullMd: '你好，我是小愿。' })
+      if (!initialized) {
+        await loadLatest()
+      }
       await nextTick()
       input.value?.focus()
       scrollToBottom(true)
@@ -256,6 +389,15 @@ onBeforeUnmount(() => {
             aria-atomic="false"
             @scroll="onScroll"
           >
+            <div
+              v-if="loadingMore"
+              class="assistant-typing assistant-history-loading"
+              role="status"
+              aria-label="加载更早消息"
+            >
+              <i></i><i></i><i></i>
+            </div>
+
             <div
               v-for="message in messages"
               :key="message.id"

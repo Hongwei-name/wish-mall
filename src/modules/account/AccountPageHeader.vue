@@ -14,9 +14,7 @@ function userInitial() {
 
 <template>
   <header class="account-topbar">
-    <div class="breadcrumb">
-      <RouterLink to="/profile">个人中心</RouterLink><span>/</span><strong>{{ section }}</strong>
-    </div>
+    <h1 class="page-title">{{ section }}</h1>
     <nav aria-label="快捷导航">
       <span class="mini-avatar" aria-label="用户头像">
         <img v-if="authStore.user?.avatar" :src="authStore.user.avatar" alt="头像" />
@@ -27,11 +25,10 @@ function userInitial() {
 </template>
 
 <style scoped>
-.breadcrumb a {
-  color: inherit;
-  text-decoration: none;
-}
-.breadcrumb a:hover {
-  color: var(--brand-ink);
+.page-title {
+  margin: 0;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
 }
 </style>

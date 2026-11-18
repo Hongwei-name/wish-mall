@@ -12,9 +12,6 @@ import '@/modules/account/account-subpage.css'
     <main id="account-content" class="account-main" tabindex="-1">
       <AccountPageHeader section="我的收藏" />
       <div class="dashboard-content">
-        <section class="welcome-heading" aria-labelledby="favorites-title">
-          <h1 id="favorites-title">我的收藏</h1>
-        </section>
         <section class="account-panel account-empty-panel" aria-label="我的收藏">
           <div class="order-empty" role="status">
             <div class="empty-illustration" aria-hidden="true">

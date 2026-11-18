@@ -104,10 +104,6 @@ function notify(message, type) {
     <main id="account-content" class="account-main" tabindex="-1">
       <AccountPageHeader section="账户设置" />
       <div class="dashboard-content">
-        <section class="welcome-heading" aria-labelledby="settings-title">
-          <h1 id="settings-title">账户设置</h1>
-        </section>
-
         <section class="account-panel settings-panel" aria-labelledby="settings-info-title">
           <header class="panel-heading"><h2 id="settings-info-title">账户信息</h2></header>
           <dl class="settings-list">

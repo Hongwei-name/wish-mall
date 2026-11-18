@@ -26,7 +26,7 @@ function userInitial() {
     <AccountSidebar />
     <main id="account-content" class="account-main" tabindex="-1">
       <header class="account-topbar">
-        <div class="breadcrumb">我的商城 <span>/</span> <strong>个人中心</strong></div>
+        <h1 class="page-title">个人中心</h1>
         <nav aria-label="快捷导航">
           <button type="button" @click="showService('商城首页')">
             探索商城 <AccountIcon name="arrow" />
@@ -46,19 +46,13 @@ function userInitial() {
         </nav>
       </header>
       <div class="dashboard-content">
-        <section class="welcome-heading" aria-labelledby="welcome-title">
-          <h1 id="welcome-title">个人工作台</h1>
-        </section>
         <section class="member-card" aria-labelledby="overview-title">
           <div class="member-content">
-            <h2 id="overview-title">你好，{{ nickname }} ✦</h2>
-            <p>欢迎回到你的个人空间。</p>
+            <h2 id="overview-title">{{ nickname }}</h2>
           </div>
           <div class="wish-art" aria-hidden="true">
             <div class="art-orbit"></div>
-            <div class="art-card">
-              <AccountIcon name="sparkle" /><span>WISH</span><small>good things ahead</small>
-            </div>
+            <div class="art-card"><AccountIcon name="sparkle" /></div>
             <span class="art-star">✧</span>
           </div>
         </section>
