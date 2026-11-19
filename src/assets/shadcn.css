@@ -1,0 +1,145 @@
+/* Tailwind utilities without global preflight: other pages retain their styles. */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+@source '../components/ui';
+
+@theme inline {
+  --color-background: var(--background, var(--surface));
+  --color-foreground: var(--foreground, var(--text));
+  --color-card: var(--card, var(--surface));
+  --color-card-foreground: var(--card-foreground, var(--text));
+  --color-popover: var(--popover, var(--surface));
+  --color-popover-foreground: var(--popover-foreground, var(--text));
+  --color-primary: var(--primary, var(--brand));
+  --color-primary-foreground: var(--primary-foreground, var(--on-brand));
+  --color-secondary: var(--secondary, var(--surface-raised));
+  --color-secondary-foreground: var(--secondary-foreground, var(--text));
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground, var(--muted));
+  --color-accent: var(--accent, var(--surface-raised));
+  --color-accent-foreground: var(--accent-foreground, var(--text));
+  --color-destructive: var(--destructive, var(--danger));
+  --color-border: var(--border);
+  --color-input: var(--input-border, var(--border-strong));
+  --color-ring: var(--ring, var(--brand-ink));
+  --radius-sm: var(--auth-radius-sm, 0.25rem);
+  --radius-md: var(--auth-radius-md, 0.375rem);
+  --radius-lg: var(--auth-radius-lg, 0.5rem);
+  --radius-xl: var(--auth-radius-xl, 0.75rem);
+}
+
+/* Official shadcn-vue v4 neutral light tokens, scoped to authentication. */
+.shadcn-auth {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --input-border: var(--input);
+  --ring: oklch(0.708 0 0);
+  --radius: 0.625rem;
+  --auth-radius-sm: calc(var(--radius) - 4px);
+  --auth-radius-md: calc(var(--radius) - 2px);
+  --auth-radius-lg: var(--radius);
+  --auth-radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  /* Local preflight stays below utilities, including spacing and typography. */
+  :where(.shadcn-auth, .shadcn-auth *) {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid var(--border);
+    outline-color: color-mix(in oklab, var(--ring) 50%, transparent);
+  }
+
+  :where(.shadcn-auth, .shadcn-auth *)::before,
+  :where(.shadcn-auth, .shadcn-auth *)::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid var(--border);
+  }
+
+  :where(.shadcn-auth) {
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :where(.shadcn-auth) :where(h1, h2, h3, h4, h5, h6) {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  :where(.shadcn-auth) :where(a) {
+    color: inherit;
+    text-decoration: inherit;
+  }
+
+  :where(.shadcn-auth) :where(button, input, select, optgroup, textarea) {
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+
+  :where(.shadcn-auth) :where(button, [type='button'], [type='reset'], [type='submit']) {
+    appearance: button;
+  }
+
+  :where(.shadcn-auth) :where(button, a, input, select, textarea):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  :where(.shadcn-auth) :where(img, svg, video, canvas, audio, iframe, embed, object) {
+    display: block;
+    vertical-align: middle;
+  }
+
+  :where(.shadcn-auth) :where(img, video) {
+    max-width: 100%;
+    height: auto;
+  }
+
+  :where(.shadcn-auth) :where(ol, ul, menu) {
+    list-style: none;
+  }
+
+  :where(.shadcn-auth) ::placeholder {
+    opacity: 1;
+    color: color-mix(in oklab, currentColor 50%, transparent);
+  }
+}
+
+/* App.vue uses unlayered font/outline rules. Return only those properties to
+   the layered cascade, so text-sm/font-medium and focus utilities still win. */
+.shadcn-auth :where(button, input, select, textarea) {
+  font: revert-layer;
+}
+
+.shadcn-auth :where(button, a, input, select, textarea):focus-visible {
+  outline: revert-layer;
+  outline-offset: revert-layer;
+}

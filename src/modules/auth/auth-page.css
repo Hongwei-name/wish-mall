@@ -1,27 +1,33 @@
 .auth-page {
+  /* Existing brand tokens define the horizontal blue gradient. The navy
+     scrim preserves white header contrast above 8:1, even over white video.
+     The 96% white card keeps existing text/link contrast above 6:1. */
+  --auth-card: rgb(255 255 255 / 96%);
   position: relative;
   isolation: isolate;
-  overflow: clip;
+  display: flex;
+  flex-direction: column;
   min-height: 100svh;
-  padding: 0 5% 32px;
-  background:
-    radial-gradient(ellipse at 80% 10%, #dce9ff 0, transparent 42%),
-    radial-gradient(ellipse at 0 60%, #e0ecff 0, transparent 46%), #f3f7fd;
+  padding: 0 5% 40px;
+  background: linear-gradient(90deg, var(--brand-strong), var(--brand));
 }
 .auth-topbar {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
+  width: 100%;
   max-width: 1360px;
-  height: 110px;
-  margin: auto;
+  min-height: 100px;
+  margin-inline: auto;
 }
 .wordmark {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: var(--text);
+  color: var(--on-brand);
   font-size: 21px;
   font-weight: 700;
   text-decoration: none;
@@ -32,30 +38,31 @@
   place-items: center;
   width: 44px;
   height: 46px;
+  border: 1px solid var(--glass-border);
   border-radius: 15px 15px 15px 5px;
   background: var(--brand);
-  color: white;
-  box-shadow: 0 8px 20px #4176e62b;
+  color: var(--on-brand);
 }
 .logo-symbol svg {
   width: 28px;
   height: 28px;
 }
 .auth-layout {
+  position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(350px, 1fr);
-  max-width: 1360px;
-  margin: 14px auto 0;
-  align-items: center;
+  flex: 1;
+  width: 100%;
+  place-items: center;
+  padding-block: 20px 60px;
 }
 .story-panel {
-  container-type: inline-size;
-  position: relative;
-  min-height: 700px;
+  position: fixed;
+  z-index: 0;
+  inset: 0;
   overflow: hidden;
-  border: 1px solid var(--glass-border);
-  border-radius: 36px;
-  background: linear-gradient(135deg, #e8f1ff, #c7dbff 70%, #b4cefb);
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--brand-strong), var(--brand));
 }
 .story-video,
 .story-shade {
@@ -63,60 +70,15 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
 }
 .story-video {
-  opacity: 0.12;
-  filter: saturate(0) blur(5px);
+  object-fit: cover;
+  opacity: 0.18;
+  filter: saturate(0);
 }
 .story-shade {
-  background: linear-gradient(110deg, #edf4fff0, #dfebffd4 50%, #c2d8ffb8);
+  background: linear-gradient(90deg, rgb(16 35 72 / 52%), rgb(16 35 72 / 64%));
 }
-.wish-sculpture {
-  position: absolute;
-  right: 6%;
-  bottom: 90px;
-  width: 270px;
-  height: 230px;
-  pointer-events: none;
-}
-.sculpture-ring {
-  position: absolute;
-  width: 255px;
-  height: 145px;
-  top: 80px;
-  left: 0;
-  border: 19px solid #ffffff75;
-  border-radius: 50%;
-  transform: rotate(-28deg);
-  box-shadow:
-    inset 0 3px 12px #4176e61a,
-    0 20px 25px #4176e61a;
-}
-.glass-cube {
-  position: absolute;
-  display: grid;
-  left: 68px;
-  top: 4px;
-  width: 145px;
-  height: 170px;
-  place-items: center;
-  border: 1px solid #ffffffef;
-  border-radius: 18px;
-  background: linear-gradient(130deg, #ffffffaa, #ffffff30 65%, #8eb4ff88);
-  backdrop-filter: blur(16px);
-  transform: rotate(-13deg);
-  box-shadow:
-    inset 4px 4px 15px #ffffff80,
-    18px 25px 35px #3563b62b;
-}
-.glass-cube svg {
-  width: 49px;
-  height: 49px;
-  color: var(--brand);
-  filter: drop-shadow(2px 4px 1px #4176e633);
-}
-/* Lucide icons scale slightly when their control is hovered. */
 .auth-page button svg,
 .auth-page a svg {
   transition: transform 0.18s ease;
@@ -124,6 +86,9 @@
 .auth-page button:hover svg,
 .auth-page a:hover svg {
   transform: scale(1.08);
+}
+.auth-topbar :focus-visible {
+  outline-color: var(--on-brand);
 }
 @media (prefers-reduced-motion: reduce) {
   .auth-page button:hover svg,

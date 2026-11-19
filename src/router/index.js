@@ -58,6 +58,7 @@ router.beforeEach(async (to) => {
     if (valid) return { name: 'profile' }
     authStore.clearSession()
   }
+  return true
 })
 
 export default router

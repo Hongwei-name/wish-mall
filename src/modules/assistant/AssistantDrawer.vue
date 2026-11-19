@@ -25,6 +25,7 @@ const input = ref(null)
 const list = ref(null)
 const panel = ref(null)
 const loadingMore = ref(false)
+const convList = ref([])
 
 let abortController
 let inactivityTimer
@@ -143,7 +144,19 @@ function onScroll() {
 async function loadLatest() {
   initialized = true
   try {
-    ensureConversationId()
+    //从后端拉当前账号所有会话（跨设备核心）
+    const convPage = await listConversations()
+    convList.value = convPage.items || []
+
+    if (convList.value.length > 0) {
+      // 使用后端返回的最新会话ID，不再优先读localStorage
+      const latestConv = convList.value[0]
+      conversationId.value = latestConv.id
+      storeConversationId(latestConv.id)
+    } else {
+      // 后端无会话，再走本地生成cid逻辑
+      ensureConversationId()
+    }
     const page = await listMessages(conversationId.value, PAGE_SIZE)
     nextCursor = page?.nextCursor || null
     hasMore = Boolean(page?.hasMore)
@@ -233,7 +246,7 @@ function startStream(question, aiMessage) {
   abortController = streamChat(
     {
       message: question,
-      conversationId: ensureConversationId(),
+      conversationId: conversationId.value,
       requestId: createUuid(),
     },
     {

@@ -63,9 +63,10 @@
 - 禁止手写图片定位、拖动轨迹或像素校验。
 - 校验成功回调中的 `captchaId` 只能用于一次 `/api/auth/sms/send` 请求；请求同时携带当前 `scene`（`register` / `login` / `reset-password`），后端按场景独立限流；`prod` 调用 PNVS 发送，`test` 只在控制台打印验证码。
 - 修改认证模块时，同步维护本节，记录接口、存储边界或主题 token 的结构性变更，并执行 `npm run build`。
-- 登录、注册与找回密码共用 AuthPanel，表单样式在 auth-panel.css，首屏视觉在 auth-page.css，布局与响应式在 auth-page-layout.css；全局语义主题 token 位于 App.vue。按用户要求使用 #4176E6 品牌蓝，--brand-ink / --brand-strong 用于小字链接与深色交互；--glass / --glass-border 用于雾透表面，文字与状态对比度记录在全局样式注释中。验证码 SDK 从全局 --brand-soft / --brand 读取主题，接口与 Token 边界不变。
+- 登录、注册与找回密码共用 AuthPanel，页面完全采用 shadcn-vue 官方 login-01 居中卡片与 Field 表单结构，旧 auth-panel.css / auth-page.css / auth-page-layout.css 不再加载。全局商城主题 token 位于 App.vue；验证码 SDK 仍从全局 --brand-soft / --brand 读取主题，接口与 Token 边界不变。
 - 登录接口路径保持不变；Token 仍存 sessionStorage，但路由守卫通过 `/auth/me` 校验，退出登录调用 `/auth/logout`。注册与重置密码要求 8-64 位且包含字母和数字；找回密码使用同一短信验证码流程，短信发送带 `scene` 供后端区分场景限流。
-- 登录首屏视频提供暂停和字幕开关，远程视频不可用时保留本地渐变背景。
+- 认证表单控件使用 shadcn-vue new-york 源码组件（JavaScript），位于 src/components/ui，包含 Button、Input、Label、Checkbox，基于 Reka UI；组件配置位于 components.json。Tailwind Vite 插件仅加载主题与工具类、不启用 preflight，主题映射复用既有品牌 token。Input 保留 v-model.trim，Checkbox 用 modelValue 双向绑定；认证业务逻辑保持在 AuthPanel 中。
+- 按用户最新要求，认证页面使用官方 login-01 的默认间距、普通标签、36px 输入控件及黑白 neutral 主题；不再使用自定义背景、浮动标签或下划线 Tab。主题与局部基础重置仅作用于 .shadcn-auth，不改变商城其他页面。登录/注册/重置切换使用表单底部链接，短信登录通过次按钮切换；仅保留业务必需的额外字段、校验与滑块接入。
 
 ### 3.5 小愿助手
 

@@ -5,11 +5,12 @@
 .account-switch {
   display: flex;
   gap: 22px;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 }
 .account-switch button {
   position: relative;
-  padding: 0 0 9px;
+  height: auto;
+  padding: 0 0 5px;
   border: 0;
   background: none;
   color: var(--muted);
@@ -22,15 +23,15 @@
 .account-switch button.active::after {
   content: '';
   position: absolute;
+  right: 0;
   bottom: 0;
   left: 0;
-  width: 20px;
-  height: 3px;
-  border-radius: 5px;
+  height: 2px;
+  border-radius: 2px;
   background: var(--brand);
 }
 .auth-heading {
-  margin-bottom: 26px;
+  margin-bottom: 12px;
 }
 .eyebrow {
   display: none;
@@ -43,64 +44,92 @@ h1 {
   line-height: 1.3;
 }
 .method-switch {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding: 5px;
-  gap: 4px;
-  border-radius: 12px;
-  background: var(--surface-raised);
+  display: flex;
+  gap: 18px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
 }
 .method-switch button {
-  min-height: 38px;
+  position: relative;
+  min-height: 30px;
+  height: auto;
+  padding: 0 0 6px;
   border: 0;
-  border-radius: 9px;
   background: transparent;
   color: var(--muted);
   font-size: 12px;
 }
 .method-switch button.active {
-  background: var(--surface);
-  color: var(--brand);
-  box-shadow: 0 2px 5px var(--shadow);
+  color: var(--brand-ink);
   font-weight: 650;
+}
+.method-switch button.active::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--brand);
 }
 .auth-form {
   display: grid;
-  gap: 19px;
-  margin-top: 24px;
+  gap: 11px;
+  margin-top: 0;
 }
 .field {
   display: grid;
-  gap: 9px;
+  gap: 5px;
 }
-.field-label,
-.field-label-row {
-  color: var(--text);
-  font-size: 12px;
-  font-weight: 600;
-}
-.field-label-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-.field-label-row button,
+.forgot-password,
 .agreement button,
 .switch-hint button {
+  height: auto;
   padding: 0;
   border: 0;
   background: none;
   color: var(--brand);
   font: inherit;
 }
-.field-label-row button {
+.forgot-password {
+  flex: 0 0 auto;
   font-size: 11px;
   font-weight: 400;
+  white-space: nowrap;
+}
+.floating-field {
+  position: relative;
+  gap: 3px;
+  padding-top: 17px;
+}
+.floating-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  padding: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  pointer-events: none;
+  transform: translateY(2px);
+  transform-origin: left center;
+  transition:
+    color 0.16s ease,
+    font-size 0.16s ease,
+    transform 0.16s ease;
+}
+.floating-field:focus-within .floating-label,
+.floating-field.has-value .floating-label {
+  color: var(--brand-ink);
+  font-size: 10px;
+  transform: translateY(0);
 }
 .input-shell {
   display: flex;
-  min-height: 50px;
+  min-height: 44px;
   padding: 0 14px;
   align-items: center;
   gap: 10px;
@@ -118,15 +147,6 @@ h1 {
 .input-shell.invalid {
   border-color: var(--danger);
 }
-.input-shell > svg {
-  width: 18px;
-  flex: 0 0 auto;
-  fill: none;
-  stroke: var(--muted);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 2;
-}
 .input-shell input {
   width: 100%;
   min-width: 0;
@@ -137,14 +157,20 @@ h1 {
   color: var(--text);
   font: inherit;
   font-size: 13px;
+  box-shadow: none;
 }
 .input-shell input::placeholder {
-  color: var(--muted);
+  color: transparent;
+}
+.input-shell input::selection {
+  color: var(--brand-ink);
+  background: transparent;
 }
 .visibility-button {
   display: grid;
   width: 28px;
   height: 30px;
+  padding: 0;
   flex: 0 0 auto;
   place-items: center;
   border: 0;
@@ -177,6 +203,8 @@ h1 {
   gap: 8px;
 }
 .code-button {
+  height: 44px;
+  padding: 0 8px;
   border: 1px solid var(--border-strong);
   border-radius: 11px;
   background: var(--brand-soft);
@@ -198,17 +226,22 @@ h1 {
   font-size: 11px;
   line-height: 1.8;
 }
-.agreement input {
+.agreement :deep(label) {
+  font: inherit;
+}
+.agreement .agreement-checkbox {
   width: 15px;
   height: 15px;
   margin: 3px 0 0;
   flex: 0 0 auto;
-  accent-color: var(--brand);
+  padding: 0;
+  border: 1px solid var(--brand-ink);
+  color: var(--on-brand);
 }
 .feedback {
   display: flex;
   margin: 0;
-  padding: 12px;
+  padding: 8px 10px;
   align-items: flex-start;
   gap: 8px;
   border: 1px solid var(--border);
@@ -235,7 +268,8 @@ h1 {
 }
 .submit-button {
   display: flex;
-  min-height: 50px;
+  min-height: 44px;
+  height: 44px;
   align-items: center;
   justify-content: center;
   gap: 9px;
@@ -264,7 +298,7 @@ h1 {
   animation: spin 0.7s linear infinite;
 }
 .switch-hint {
-  margin: 25px 0 0;
+  margin: 10px 0 0;
   color: var(--muted);
   font-size: 12px;
   text-align: center;
@@ -277,50 +311,48 @@ h1 {
 .auth-panel {
   max-width: none;
 }
-.account-switch {
-  gap: 26px;
-  margin-bottom: 26px;
-}
 .account-switch button {
   font-size: 14px;
 }
 .account-switch button.active,
 .method-switch button.active,
-.field-label-row button,
+.forgot-password,
 .agreement button,
 .switch-hint button,
 .code-button {
   color: var(--brand-ink);
 }
 .auth-heading h1 {
-  font-size: clamp(24px, 8cqi, 30px);
+  font-size: clamp(24px, 8cqi, 26px);
   letter-spacing: -0.035em;
   font-weight: 650;
 }
 .auth-heading > p:last-child {
   line-height: 1.8;
 }
-.method-switch {
-  background: #e8effa;
-  border: 1px solid #ffffffa8;
-}
-.method-switch button {
-  min-height: 39px;
-}
 .input-shell {
-  min-height: 52px;
+  min-height: 44px;
   background: #ffffffb8;
   border-color: var(--border);
   border-radius: 12px;
   box-shadow: inset 0 1px 2px #20304b03;
 }
+.floating-field .input-shell {
+  padding-inline: 16px;
+}
+.floating-field .input-shell input {
+  align-self: stretch;
+}
+.floating-field .input-shell:focus-within + .floating-label {
+  color: var(--brand-ink);
+}
 .input-shell:hover {
   border-color: var(--border-strong);
 }
 .submit-button {
-  min-height: 54px;
+  min-height: 44px;
   border: 1px solid #ffffff40;
-  border-radius: 13px;
+  border-radius: 11px;
   font-size: 19px;
   font-weight: 700;
   box-shadow:
@@ -338,7 +370,7 @@ h1 {
 }
 @container (max-width: 300px) {
   h1 {
-    font-size: 28px;
+    font-size: 24px;
   }
   .code-row {
     grid-template-columns: minmax(0, 1fr) 90px;
