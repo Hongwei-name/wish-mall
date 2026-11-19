@@ -46,7 +46,9 @@ const needsPassword = computed(
   () => isRegister.value || isReset.value || loginMethod.value === 'password',
 )
 const showConfirm = computed(() => isRegister.value || isReset.value)
-const heading = computed(() => (isReset.value ? '重设密码' : isRegister.value ? '创建账户' : '登录'))
+const heading = computed(() =>
+  isReset.value ? '重设密码' : isRegister.value ? '创建账户' : '登录',
+)
 const passwordLabel = computed(() => (isReset.value ? '新密码' : '密码'))
 const actionText = computed(() => (isReset.value ? '重设密码' : isRegister.value ? '注册' : '登录'))
 const smsScene = computed(() =>
@@ -59,6 +61,13 @@ function clearFeedback() {
   Object.keys(fieldErrors).forEach((key) => {
     fieldErrors[key] = ''
   })
+}
+
+function clearAgreementFeedback(checked) {
+  if (checked === true && feedback.message === '请先阅读并同意用户协议和隐私政策') {
+    feedback.type = ''
+    feedback.message = ''
+  }
 }
 
 function clearPasswordErrors() {
@@ -216,63 +225,247 @@ onBeforeUnmount(() => clearInterval(cooldownTimer))
   <div class="flex flex-col gap-6">
     <Card>
       <CardHeader>
-        <CardTitle id="auth-heading">{{ heading }}{{ !isRegister && !isReset ? '你的账户' : '' }}</CardTitle>
-        <CardDescription>{{ isReset ? '通过短信验证码设置新密码' : isRegister ? '输入手机号和密码，创建你的账户' : '输入手机号和密码，登录你的账户' }}</CardDescription>
+        <CardTitle id="auth-heading" :class="{ 'text-xl': !isReset }"
+          >{{ heading }}{{ !isRegister && !isReset ? '你的账户' : '' }}</CardTitle
+        >
+        <CardDescription v-if="isReset">通过短信验证码设置新密码</CardDescription>
       </CardHeader>
       <CardContent>
-        <form novalidate :aria-busy="submitting" aria-labelledby="auth-heading" @submit.prevent="submit">
+        <form
+          novalidate
+          :aria-busy="submitting"
+          aria-labelledby="auth-heading"
+          @submit.prevent="submit"
+        >
           <FieldGroup>
-            <Field>
-              <FieldLabel for="auth-phone">手机号</FieldLabel>
-              <Input id="auth-phone" v-model.trim="form.phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="11" placeholder="请输入手机号" :aria-invalid="!!fieldErrors.phone" :aria-describedby="fieldErrors.phone ? 'phone-error' : undefined" @blur="validateField('phone')" @input="fieldErrors.phone = ''" />
-              <p v-if="fieldErrors.phone" id="phone-error" role="alert" class="text-sm text-destructive">{{ fieldErrors.phone }}</p>
+            <Field class="relative">
+              <div class="relative">
+                <FieldLabel for="auth-phone" :class="{ 'opacity-0': !!fieldErrors.phone }"
+                  >手机号</FieldLabel
+                >
+                <p
+                  v-if="fieldErrors.phone"
+                  id="phone-error"
+                  role="alert"
+                  class="absolute left-0 top-0 text-sm leading-snug text-destructive"
+                >
+                  {{ fieldErrors.phone }}
+                </p>
+              </div>
+              <Input
+                id="auth-phone"
+                v-model.trim="form.phone"
+                type="tel"
+                inputmode="numeric"
+                autocomplete="tel"
+                maxlength="11"
+                placeholder="请输入手机号"
+                :aria-invalid="!!fieldErrors.phone"
+                :aria-describedby="fieldErrors.phone ? 'phone-error' : undefined"
+                @blur="validateField('phone')"
+                @input="fieldErrors.phone = ''"
+              />
             </Field>
-            <Field v-if="needsPassword">
+
+            <Field v-if="needsPassword" class="relative">
               <div class="flex items-center">
-                <FieldLabel for="auth-password">{{ passwordLabel }}</FieldLabel>
-                <button v-if="usePassword" type="button" class="ml-auto text-sm underline-offset-4 hover:underline" @click="startReset">忘记密码？</button>
+                <div class="relative min-w-0 flex-1">
+                  <FieldLabel for="auth-password" :class="{ 'opacity-0': !!fieldErrors.password }"
+                    >{{ passwordLabel }}
+                    <FieldDescription v-if="(isRegister || isReset) && !fieldErrors.password"
+                      >8–64 位，包含字母和数字。</FieldDescription
+                    ></FieldLabel
+                  >
+                  <p
+                    v-if="fieldErrors.password"
+                    id="password-error"
+                    role="alert"
+                    class="absolute left-0 top-0 w-full truncate text-sm leading-snug text-destructive"
+                    :title="fieldErrors.password"
+                  >
+                    {{ fieldErrors.password }}
+                  </p>
+                </div>
+                <button
+                  v-if="usePassword"
+                  type="button"
+                  class="ml-auto text-sm underline-offset-4 hover:underline"
+                  @click="startReset"
+                >
+                  忘记密码？
+                </button>
               </div>
               <div class="relative">
-                <Input id="auth-password" v-model="form.password" :type="showPassword ? 'text' : 'password'" :autocomplete="isRegister || isReset ? 'new-password' : 'current-password'" class="pr-10" :aria-invalid="!!fieldErrors.password" :aria-describedby="fieldErrors.password ? 'password-error' : undefined" @blur="validateField('password')" @input="clearPasswordErrors" />
-                <Button type="button" variant="ghost" size="icon" class="absolute right-0 top-0" :aria-label="showPassword ? '隐藏密码' : '显示密码'" :aria-pressed="showPassword" @click="showPassword = !showPassword"><AccountIcon name="eye" class="size-4" /></Button>
+                <Input
+                  id="auth-password"
+                  v-model="form.password"
+                  :type="showPassword ? 'text' : 'password'"
+                  :autocomplete="isRegister || isReset ? 'new-password' : 'current-password'"
+                  class="pr-10"
+                  :aria-invalid="!!fieldErrors.password"
+                  :aria-describedby="fieldErrors.password ? 'password-error' : undefined"
+                  @blur="validateField('password')"
+                  @input="clearPasswordErrors"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  class="absolute right-0 top-0"
+                  :aria-label="showPassword ? '隐藏密码' : '显示密码'"
+                  :aria-pressed="showPassword"
+                  @click="showPassword = !showPassword"
+                  ><AccountIcon name="eye" class="size-4"
+                /></Button>
               </div>
-              <FieldDescription v-if="isRegister || isReset">8–64 位，包含字母和数字。</FieldDescription>
-              <p v-if="fieldErrors.password" id="password-error" role="alert" class="text-sm text-destructive">{{ fieldErrors.password }}</p>
+              <!-- <FieldDescription v-if="(isRegister || isReset) && !fieldErrors.password"
+                >8–64 位，包含字母和数字。</FieldDescription
+              > -->
             </Field>
             <Field v-if="showConfirm">
-              <FieldLabel for="auth-confirm-password">确认密码</FieldLabel>
-              <Input id="auth-confirm-password" v-model="form.confirmPassword" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" :aria-invalid="!!fieldErrors.confirmPassword" :aria-describedby="fieldErrors.confirmPassword ? 'confirm-password-error' : undefined" @blur="validateField('confirmPassword')" @input="fieldErrors.confirmPassword = ''" />
-              <p v-if="fieldErrors.confirmPassword" id="confirm-password-error" role="alert" class="text-sm text-destructive">{{ fieldErrors.confirmPassword }}</p>
+              <div class="relative">
+                <FieldLabel
+                  for="auth-confirm-password"
+                  :class="{ 'opacity-0': !!fieldErrors.confirmPassword }"
+                  >确认密码</FieldLabel
+                >
+                <p
+                  v-if="fieldErrors.confirmPassword"
+                  id="confirm-password-error"
+                  role="alert"
+                  class="absolute left-0 top-0 text-sm leading-snug text-destructive"
+                >
+                  {{ fieldErrors.confirmPassword }}
+                </p>
+              </div>
+              <Input
+                id="auth-confirm-password"
+                v-model="form.confirmPassword"
+                :type="showPassword ? 'text' : 'password'"
+                autocomplete="new-password"
+                :aria-invalid="!!fieldErrors.confirmPassword"
+                :aria-describedby="
+                  fieldErrors.confirmPassword ? 'confirm-password-error' : undefined
+                "
+                @blur="validateField('confirmPassword')"
+                @input="fieldErrors.confirmPassword = ''"
+              />
             </Field>
             <Field v-if="needsCode">
-              <FieldLabel for="auth-code">短信验证码</FieldLabel>
-              <div class="flex gap-2">
-                <Input id="auth-code" v-model.trim="form.code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" class="min-w-0" :aria-invalid="!!fieldErrors.code" :aria-describedby="fieldErrors.code ? 'code-error' : undefined" @blur="validateField('code')" @input="fieldErrors.code = ''" />
-                <Button type="button" variant="outline" :disabled="sending || cooldown > 0" @click="openCaptcha">{{ cooldown ? `${cooldown}s` : sending ? '发送中' : '获取验证码' }}</Button>
+              <div class="relative">
+                <FieldLabel for="auth-code" :class="{ 'opacity-0': !!fieldErrors.code }"
+                  >短信验证码</FieldLabel
+                >
+                <p
+                  v-if="fieldErrors.code"
+                  id="code-error"
+                  role="alert"
+                  class="absolute left-0 top-0 text-sm leading-snug text-destructive"
+                >
+                  {{ fieldErrors.code }}
+                </p>
               </div>
-              <p v-if="fieldErrors.code" id="code-error" role="alert" class="text-sm text-destructive">{{ fieldErrors.code }}</p>
+              <div class="flex gap-2">
+                <Input
+                  id="auth-code"
+                  v-model.trim="form.code"
+                  inputmode="numeric"
+                  autocomplete="one-time-code"
+                  maxlength="6"
+                  class="min-w-0"
+                  :aria-invalid="!!fieldErrors.code"
+                  :aria-describedby="fieldErrors.code ? 'code-error' : undefined"
+                  @blur="validateField('code')"
+                  @input="fieldErrors.code = ''"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  :disabled="sending || cooldown > 0"
+                  @click="openCaptcha"
+                  >{{ cooldown ? `${cooldown}s` : sending ? '发送中' : '获取验证码' }}</Button
+                >
+              </div>
             </Field>
             <Field v-if="isRegister" orientation="horizontal">
-              <Checkbox id="auth-agreement" v-model="agreed" />
-              <Label for="auth-agreement" class="text-sm leading-normal">我已阅读并同意
-                <button type="button" class="underline underline-offset-4" @click.prevent="showUnavailable('用户协议暂未发布')">用户协议</button>和
-                <button type="button" class="underline underline-offset-4" @click.prevent="showUnavailable('隐私政策暂未发布')">隐私政策</button>
+              <Checkbox
+                id="auth-agreement"
+                v-model="agreed"
+                @update:model-value="clearAgreementFeedback"
+              />
+              <Label for="auth-agreement" class="text-sm leading-normal"
+                >我已阅读并同意
+                <button
+                  type="button"
+                  class="underline underline-offset-4"
+                  @click.prevent="showUnavailable('用户协议暂未发布')"
+                >
+                  用户协议</button
+                >和
+                <button
+                  type="button"
+                  class="underline underline-offset-4"
+                  @click.prevent="showUnavailable('隐私政策暂未发布')"
+                >
+                  隐私政策
+                </button>
               </Label>
             </Field>
-            <p v-if="feedback.message" :role="feedback.type === 'error' ? 'alert' : 'status'" class="text-sm" :class="feedback.type === 'error' ? 'text-destructive' : 'text-muted-foreground'">{{ feedback.message }}</p>
+            <p
+              v-if="feedback.message"
+              :role="feedback.type === 'error' ? 'alert' : 'status'"
+              class="text-sm"
+              :class="feedback.type === 'error' ? 'text-destructive' : 'text-muted-foreground'"
+            >
+              {{ feedback.message }}
+            </p>
             <Field>
-              <Button type="submit" :disabled="submitting">{{ submitting ? '正在处理…' : actionText }}</Button>
-              <Button v-if="!isRegister && !isReset" type="button" variant="outline" @click="switchLoginMethod(usePassword ? 'sms' : 'password')">{{ usePassword ? '使用验证码登录' : '使用密码登录' }}</Button>
+              <Button type="submit" :disabled="submitting">{{
+                submitting ? '正在处理…' : actionText
+              }}</Button>
+              <Button
+                v-if="!isRegister && !isReset"
+                type="button"
+                variant="outline"
+                @click="switchLoginMethod(usePassword ? 'sms' : 'password')"
+                >{{ usePassword ? '使用验证码登录' : '使用密码登录' }}</Button
+              >
               <FieldDescription class="text-center">
-                <template v-if="isReset"><button type="button" class="underline underline-offset-4" @click="backToLogin">返回登录</button></template>
-                <template v-else-if="isRegister">已有账户？ <button type="button" class="underline underline-offset-4" @click="switchAccountMode('login')">登录</button></template>
-                <template v-else>还没有账户？ <button type="button" class="underline underline-offset-4" @click="switchAccountMode('register')">注册</button></template>
+                <template v-if="isReset"
+                  ><button type="button" class="underline underline-offset-4" @click="backToLogin">
+                    返回登录
+                  </button></template
+                >
+                <template v-else-if="isRegister"
+                  >已有账户？
+                  <button
+                    type="button"
+                    class="underline underline-offset-4"
+                    @click="switchAccountMode('login')"
+                  >
+                    登录
+                  </button></template
+                >
+                <template v-else
+                  >还没有账户？
+                  <button
+                    type="button"
+                    class="underline underline-offset-4"
+                    @click="switchAccountMode('register')"
+                  >
+                    注册
+                  </button></template
+                >
               </FieldDescription>
             </Field>
           </FieldGroup>
         </form>
       </CardContent>
     </Card>
-    <TianaiCaptcha ref="captcha" @verified="handleCaptchaVerified" @error="showUnavailable($event, 'error')" />
+    <TianaiCaptcha
+      ref="captcha"
+      @verified="handleCaptchaVerified"
+      @error="showUnavailable($event, 'error')"
+    />
   </div>
 </template>
