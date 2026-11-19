@@ -119,7 +119,7 @@ defineExpose({ open })
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgb(32 48 75 / 40%);
+  background: color-mix(in srgb, var(--slate-900) 40%, transparent);
   backdrop-filter: blur(4px);
 }
 

@@ -29,27 +29,27 @@
   --radius-xl: var(--auth-radius-xl, 0.75rem);
 }
 
-/* Official shadcn-vue v4 neutral light tokens, scoped to authentication. */
+/* Authentication shares the mall's official Tailwind Slate palette. */
 .shadcn-auth {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --input-border: var(--input);
-  --ring: oklch(0.708 0 0);
+  --background: var(--slate-100);
+  --foreground: var(--slate-950);
+  --card: var(--slate-50);
+  --card-foreground: var(--slate-900);
+  --popover: var(--slate-50);
+  --popover-foreground: var(--slate-900);
+  --primary: var(--slate-800);
+  --primary-foreground: var(--slate-50);
+  --secondary: var(--slate-200);
+  --secondary-foreground: var(--slate-900);
+  --muted: var(--slate-100);
+  --muted-foreground: var(--slate-600);
+  --accent: var(--slate-200);
+  --accent-foreground: var(--slate-900);
+  --destructive: var(--danger);
+  --border: var(--slate-200);
+  --input: var(--slate-50);
+  --input-border: var(--slate-300);
+  --ring: var(--slate-500);
   --radius: 0.625rem;
   --auth-radius-sm: calc(var(--radius) - 4px);
   --auth-radius-md: calc(var(--radius) - 2px);

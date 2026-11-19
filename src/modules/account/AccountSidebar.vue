@@ -33,7 +33,6 @@ async function signOut() {
   <a class="skip-link" href="#account-content">跳到主要内容</a>
   <aside class="account-sidebar">
     <a class="account-brand" href="#account-content" aria-label="如你所愿 WISH MALL 个人中心">
-      <span class="brand-symbol"><AccountIcon name="sparkle" /></span>
       <span><strong>如你所愿</strong><small>WISH MALL</small></span>
     </a>
     <nav class="sidebar-nav" aria-label="个人中心导航">

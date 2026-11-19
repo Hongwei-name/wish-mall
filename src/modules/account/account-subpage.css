@@ -92,7 +92,7 @@
   flex: 0 0 auto;
   border: 1px solid var(--glass-border);
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--brand-soft), var(--glass));
+  background: var(--brand-soft);
   color: var(--brand-ink);
   font-weight: 600;
   box-shadow:
@@ -145,7 +145,7 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: rgb(30 60 120 / 45%);
+  background: color-mix(in srgb, var(--slate-900) 65%, transparent);
   color: #fff;
   opacity: 0;
   transition: opacity 0.15s ease;
@@ -196,7 +196,7 @@
   opacity: 1;
 }
 .account-subpage .profile-value:active {
-  background: #dde9ff;
+  background: var(--slate-200);
 }
 .account-subpage .profile-edit {
   display: inline-flex;

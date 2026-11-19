@@ -60,7 +60,7 @@ onBeforeUnmount(() => {
   border: 1px solid var(--glass-border);
   border-radius: 24px;
   color: var(--text);
-  background: linear-gradient(145deg, var(--glass-border), var(--glass));
+  background: var(--surface);
   backdrop-filter: blur(28px);
   box-shadow:
     inset 0 1px white,
@@ -103,7 +103,7 @@ svg {
   place-items: center;
   border: 1px solid var(--glass-border);
   border-radius: 18px;
-  background: linear-gradient(145deg, var(--glass), var(--brand-soft));
+  background: var(--brand-soft);
   color: var(--brand-ink);
   box-shadow:
     inset 0 1px white,

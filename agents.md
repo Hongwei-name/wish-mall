@@ -66,7 +66,7 @@
 - 登录、注册与找回密码共用 AuthPanel，页面完全采用 shadcn-vue 官方 login-01 居中卡片与 Field 表单结构，旧 auth-panel.css / auth-page.css / auth-page-layout.css 不再加载。全局商城主题 token 位于 App.vue；验证码 SDK 仍从全局 --brand-soft / --brand 读取主题，接口与 Token 边界不变。
 - 登录接口路径保持不变；Token 仍存 sessionStorage，但路由守卫通过 `/auth/me` 校验，退出登录调用 `/auth/logout`。注册与重置密码要求 8-64 位且包含字母和数字；找回密码使用同一短信验证码流程，短信发送带 `scene` 供后端区分场景限流。
 - 认证表单控件使用 shadcn-vue new-york 源码组件（JavaScript），位于 src/components/ui，包含 Button、Input、Label、Checkbox，基于 Reka UI；组件配置位于 components.json。Tailwind Vite 插件仅加载主题与工具类、不启用 preflight，主题映射复用既有品牌 token。Input 保留 v-model.trim，Checkbox 用 modelValue 双向绑定；认证业务逻辑保持在 AuthPanel 中。
-- 按用户最新要求，认证页面使用官方 login-01 的默认间距、普通标签、36px 输入控件及黑白 neutral 主题；不再使用自定义背景、浮动标签或下划线 Tab。主题与局部基础重置仅作用于 .shadcn-auth，不改变商城其他页面。登录/注册/重置切换使用表单底部链接，短信登录通过次按钮切换；仅保留业务必需的额外字段、校验与滑块接入。
+- 按用户最新要求，认证页面使用官方 login-01 的默认间距、普通标签、36px 输入控件及 Tailwind CSS Slate 主题；不再使用自定义背景、浮动标签或下划线 Tab。主题与局部基础重置仅作用于 .shadcn-auth，不改变商城其他页面。登录/注册/重置切换使用表单底部链接，短信登录通过次按钮切换；仅保留业务必需的额外字段、校验与滑块接入。
 
 ### 3.5 小愿助手
 
@@ -124,16 +124,16 @@
 
 ```css
 :root {
-  --brand: #4176e6; /* 品牌主色、装饰与大字加粗 CTA */
-  --brand-ink: #2857b5; /* 小字链接，白底约 6.7:1 */
-  --brand-strong: #2857b5; /* hover 与强调交互 */
-  --brand-soft: #eaf1ff; /* 品牌浅色背景 */
-  --glass: rgb(255 255 255 / 72%);
-  --glass-border: rgb(255 255 255 / 85%);
+  --brand: var(--slate-800); /* 主按钮与品牌强调 */
+  --brand-ink: var(--slate-700); /* 小字链接，slate-50 底约 10:1 */
+  --brand-strong: var(--slate-950); /* hover 与强调交互 */
+  --brand-soft: var(--slate-100); /* 品牌浅色背景 */
+  --glass: color-mix(in srgb, var(--slate-50) 72%, transparent);
+  --glass-border: color-mix(in srgb, var(--slate-50) 85%, transparent);
 }
 ```
 
-雾透效果使用半透明白色、backdrop-filter 与柔蓝投影；输入和正文保持清晰对比。尊重系统减少动态效果设置。
+全局 App.vue 的 --slate-50 至 --slate-950 引用 Tailwind 官方完整色板；商城、认证页与助手共享同一色源。50/100 用于表面，200/300 用于边框，400 用于装饰与禁用细节，500 用于次要图标/焦点，600 用于辅助正文，700/800/900/950 用于链接、品牌与深色文本。slate-600/900 在 slate-50 上对比度约 7.2:1/17:1，slate-50 在 slate-800 上约 14:1；浅色层级仅用于背景和装饰，不承担正文对比。成功、警告与错误保留语义色。雾透效果使用半透明 slate-50、backdrop-filter 与 Slate 投影；输入和正文保持清晰对比。尊重系统减少动态效果设置。
 
 ## 6. 框架特定约束
 

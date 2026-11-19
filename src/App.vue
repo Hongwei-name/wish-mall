@@ -6,33 +6,33 @@
 :root {
   color-scheme: light;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
-  /* Contrast on white: text 13.2:1, muted 5.3:1, brand 4.23:1.
-     #4176e6 is the requested brand, used for large/bold CTA and accents.
-     Brand ink #2857b5 (6.7:1) is used for small links; white CTA text
-     uses a 19px bold weight. Status colors on white exceed 4.5:1.
-     Frosted surfaces layer over pale blue; solid inputs preserve contrast. */
-  --page: #f0f5fc;
-  --surface: #ffffff;
-  --surface-raised: #edf3fc;
-  --input: #f9fbff;
-  --text: #20304b;
-  --muted: #5c6c84;
-  --border: #dae4f2;
-  --border-strong: #bdcce2;
-  --shadow: rgb(39 75 136 / 10%);
-  --brand: #4176e6;
-  --brand-strong: #2857b5;
-  --brand-ink: #2857b5;
-  --brand-soft: #eaf1ff;
-  --on-brand: #ffffff;
-  --glass: rgb(255 255 255 / 72%);
-  --glass-border: rgb(255 255 255 / 85%);
-  --danger: #ac354e;
-  --danger-soft: #fff0f3;
-  --success: #326653;
-  --success-soft: #edf7f1;
-  --warning: #886017;
-  --warning-soft: #fff7e6;
+  /* Neutral warm surfaces pair with the requested Tailwind sky-300 brand.
+     Deep blue text on sky-300 keeps small labels legible; white is reserved for
+     the darker sky-700 interaction state. */
+  --page: #e0f2fe;
+  --surface: #fffefa;
+  --surface-raised: #ece9e2;
+  --input: #fffefa;
+  --text: #26342d;
+  --muted: #64736a;
+  --border: #e2e5dc;
+  --border-strong: #c8d1c5;
+  --shadow: rgb(38 52 45 / 10%);
+  --brand: #7dd3fc;
+  --brand-strong: #0369a1;
+  --brand-ink: #075985;
+  --brand-soft: #e0f2fe;
+  --on-brand: #0c4a6e;
+  --glass: rgb(255 254 250 / 76%);
+  --glass-border: rgb(255 254 250 / 88%);
+  --accent-amber: #d1a768;
+  --accent-amber-soft: #f3ead8;
+  --danger: #a9484c;
+  --danger-soft: #f8e9e6;
+  --success: #39745a;
+  --success-soft: #e3eee4;
+  --warning: #91651f;
+  --warning-soft: #f5eddc;
   --radius: 24px;
 }
 * {
@@ -72,7 +72,7 @@ select:focus-visible {
   outline-offset: 4px;
 }
 ::selection {
-  background: #cbdcff;
+  background: var(--slate-300);
   color: var(--text);
 }
 @media (prefers-reduced-motion: reduce) {

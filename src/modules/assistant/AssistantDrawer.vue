@@ -4,7 +4,7 @@ import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { Bot, RefreshCw, Send, X } from '@lucide/vue'
 import { useAuthStore } from '@/stores/auth'
 import MarkdownMessage from './MarkdownMessage.vue'
-import { listMessages, streamChat } from './api'
+import { listConversations, listMessages, streamChat } from './api'
 import './assistant.css'
 
 const props = defineProps({
@@ -25,7 +25,9 @@ const input = ref(null)
 const list = ref(null)
 const panel = ref(null)
 const loadingMore = ref(false)
-const convList = ref([])
+const loadingHistory = ref(false)
+const historyError = ref('')
+let historyVersion = 0
 
 let abortController
 let inactivityTimer
@@ -36,7 +38,6 @@ let sequence = 0
 let stickToBottom = true
 let nextCursor = null
 let hasMore = false
-let initialized = false
 
 function createUuid() {
   if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
@@ -85,7 +86,9 @@ function ensureConversationId() {
 }
 
 const streaming = computed(() => messages.value.some((message) => message.isStreaming))
-const canSend = computed(() => draft.value.trim().length > 0 && !streaming.value)
+const canSend = computed(
+  () => draft.value.trim().length > 0 && !streaming.value && !loadingHistory.value && !historyError.value,
+)
 
 function addMessage(role, extra = {}) {
   messages.value.push({
@@ -142,22 +145,28 @@ function onScroll() {
 }
 
 async function loadLatest() {
-  initialized = true
+  const version = ++historyVersion
+  loadingHistory.value = true
+  loadingMore.value = false
+  historyError.value = ''
+  nextCursor = null
+  hasMore = false
   try {
-    //从后端拉当前账号所有会话（跨设备核心）
+    // 以账号的服务端最新会话为准，本地缓存仅用于尚未发送过消息的新会话。
     const convPage = await listConversations()
-    convList.value = convPage.items || []
-
-    if (convList.value.length > 0) {
-      // 使用后端返回的最新会话ID，不再优先读localStorage
-      const latestConv = convList.value[0]
-      conversationId.value = latestConv.id
+    if (version !== historyVersion) return
+    const latestConv = convPage?.items?.[0]
+    conversationOwnerKey = conversationStorageKey()
+    conversationId.value = latestConv?.id || ''
+    if (latestConv) {
       storeConversationId(latestConv.id)
     } else {
-      // 后端无会话，再走本地生成cid逻辑
       ensureConversationId()
+      addGreeting()
+      return
     }
     const page = await listMessages(conversationId.value, PAGE_SIZE)
+    if (version !== historyVersion) return
     nextCursor = page?.nextCursor || null
     hasMore = Boolean(page?.hasMore)
     const items = Array.isArray(page?.items) ? [...page.items].reverse() : []
@@ -167,24 +176,26 @@ async function loadLatest() {
       addGreeting()
     }
   } catch (error) {
-    if (error?.code === 404) {
-      // 旧会话不属于当前用户：换一个新的会话 id。
-      conversationId.value = createUuid()
-      storeConversationId(conversationId.value)
+    if (version !== historyVersion) return
+    historyError.value = error?.message || '历史消息加载失败，请重试'
+  } finally {
+    if (version === historyVersion) {
+      loadingHistory.value = false
+      await nextTick()
+      scrollToBottom(true)
     }
-    addGreeting()
   }
-  await nextTick()
-  scrollToBottom(true)
 }
 
 async function loadOlder() {
-  if (loadingMore.value || !hasMore || !nextCursor) return
+  if (loadingHistory.value || loadingMore.value || !hasMore || !nextCursor) return
+  const version = historyVersion
   loadingMore.value = true
   const element = list.value
   const previousHeight = element?.scrollHeight ?? 0
   try {
     const page = await listMessages(conversationId.value, PAGE_SIZE, nextCursor)
+    if (version !== historyVersion) return
     nextCursor = page?.nextCursor || null
     hasMore = Boolean(page?.hasMore)
     const items = Array.isArray(page?.items) ? [...page.items].reverse() : []
@@ -195,9 +206,9 @@ async function loadOlder() {
       if (element) element.scrollTop += element.scrollHeight - previousHeight
     }
   } catch {
-    hasMore = false
+    if (version === historyVersion) hasMore = false
   } finally {
-    loadingMore.value = false
+    if (version === historyVersion) loadingMore.value = false
   }
 }
 
@@ -284,7 +295,7 @@ function startStream(question, aiMessage) {
 
 function send() {
   const text = draft.value.trim()
-  if (!text || streaming.value) return
+  if (!canSend.value) return
   draft.value = ''
   addMessage('user', { text })
   const aiMessage = addMessage('ai', { retryText: text })
@@ -345,9 +356,7 @@ watch(
       returnFocus = document.activeElement
       lockScroll()
       window.addEventListener('keydown', onKeydown)
-      if (!initialized) {
-        await loadLatest()
-      }
+      await loadLatest()
       await nextTick()
       input.value?.focus()
       scrollToBottom(true)
@@ -365,7 +374,26 @@ watch(
   },
 )
 
+watch(
+  () => authStore.user?.id,
+  () => {
+    ++historyVersion
+    closeStream()
+    messages.value = []
+    draft.value = ''
+    conversationId.value = ''
+    conversationOwnerKey = ''
+    nextCursor = null
+    hasMore = false
+    loadingMore.value = false
+    loadingHistory.value = false
+    historyError.value = ''
+    if (props.open) loadLatest()
+  },
+)
+
 onBeforeUnmount(() => {
+  ++historyVersion
   closeStream()
   window.removeEventListener('keydown', onKeydown)
   unlockScroll()
@@ -402,6 +430,13 @@ onBeforeUnmount(() => {
             aria-atomic="false"
             @scroll="onScroll"
           >
+            <div v-if="loadingHistory" role="status">正在加载历史消息…</div>
+            <div v-if="historyError" role="alert">
+              <p>{{ historyError }}</p>
+              <button type="button" class="assistant-close" aria-label="重试加载历史消息" @click="loadLatest">
+                <RefreshCw :size="18" aria-hidden="true" />
+              </button>
+            </div>
             <div
               v-if="loadingMore"
               class="assistant-typing assistant-history-loading"
